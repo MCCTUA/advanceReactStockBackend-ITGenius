@@ -360,33 +360,76 @@ export interface AdminTransferTokenPermission extends Schema.CollectionType {
   }
 }
 
-export interface ApiStockStock extends Schema.CollectionType {
-  collectionName: 'stocks'
+export interface ApiCategoryCategory extends Schema.CollectionType {
+  collectionName: 'categories'
   info: {
-    singularName: 'stock'
-    pluralName: 'stocks'
-    displayName: 'Stock'
+    singularName: 'category'
+    pluralName: 'categories'
+    displayName: 'Category'
   }
   options: {
     draftAndPublish: true
   }
   attributes: {
-    Pname: Attribute.String
-    Pprice: Attribute.Integer
-    Pqty: Attribute.Integer
-    Pdate: Attribute.DateTime
-    Pstatus: Attribute.Integer
+    title: Attribute.String
+    status: Attribute.Boolean & Attribute.DefaultTo<true>
     createdAt: Attribute.DateTime
     updatedAt: Attribute.DateTime
     publishedAt: Attribute.DateTime
     createdBy: Attribute.Relation<
-      'api::stock.stock',
+      'api::category.category',
       'oneToOne',
       'admin::user'
     > &
       Attribute.Private
     updatedBy: Attribute.Relation<
-      'api::stock.stock',
+      'api::category.category',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private
+  }
+}
+
+export interface ApiProductProduct extends Schema.CollectionType {
+  collectionName: 'products'
+  info: {
+    singularName: 'product'
+    pluralName: 'products'
+    displayName: 'Product'
+  }
+  options: {
+    draftAndPublish: true
+  }
+  attributes: {
+    title: Attribute.String
+    description: Attribute.RichText
+    price: Attribute.Decimal
+    qty: Attribute.Integer
+    image: Attribute.Media
+    is_featured: Attribute.Boolean & Attribute.DefaultTo<true>
+    slug: Attribute.UID<'api::product.product', 'title'>
+    category: Attribute.Relation<
+      'api::product.product',
+      'oneToOne',
+      'api::category.category'
+    >
+    users: Attribute.Relation<
+      'api::product.product',
+      'manyToOne',
+      'plugin::users-permissions.user'
+    >
+    createdAt: Attribute.DateTime
+    updatedAt: Attribute.DateTime
+    publishedAt: Attribute.DateTime
+    createdBy: Attribute.Relation<
+      'api::product.product',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private
+    updatedBy: Attribute.Relation<
+      'api::product.product',
       'oneToOne',
       'admin::user'
     > &
@@ -756,6 +799,11 @@ export interface PluginUsersPermissionsUser extends Schema.CollectionType {
       'manyToOne',
       'plugin::users-permissions.role'
     >
+    products: Attribute.Relation<
+      'plugin::users-permissions.user',
+      'oneToMany',
+      'api::product.product'
+    >
     createdAt: Attribute.DateTime
     updatedAt: Attribute.DateTime
     createdBy: Attribute.Relation<
@@ -830,7 +878,8 @@ declare module '@strapi/types' {
       'admin::api-token-permission': AdminApiTokenPermission
       'admin::transfer-token': AdminTransferToken
       'admin::transfer-token-permission': AdminTransferTokenPermission
-      'api::stock.stock': ApiStockStock
+      'api::category.category': ApiCategoryCategory
+      'api::product.product': ApiProductProduct
       'plugin::upload.file': PluginUploadFile
       'plugin::upload.folder': PluginUploadFolder
       'plugin::content-releases.release': PluginContentReleasesRelease

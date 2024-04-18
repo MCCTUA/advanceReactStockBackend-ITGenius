@@ -1,10 +1,9 @@
-// @ts-nocheck
 'use strict';
 
 /**
- * stock router
+ * product router
  */
 
 const { createCoreRouter } = require('@strapi/strapi').factories;
 
-module.exports = createCoreRouter('api::stock.stock');
+module.exports = createCoreRouter('api::product.product');
